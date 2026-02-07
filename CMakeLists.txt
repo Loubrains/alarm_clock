@@ -35,6 +35,7 @@ pico_sdk_init()
 
 # Add any subdirectories with CMakeLists.txt files (such as libraries)
 add_subdirectory(lib/rtc)
+add_subdirectory(lib/ssd1309)
 
 # Add executable. Default name is the project name, version 0.1
 add_executable(alarm_clock
@@ -47,12 +48,16 @@ pico_set_program_version(alarm_clock "0.1")
 
 # Add the standard library to the build
 target_link_libraries(alarm_clock
+    pico_stdlib
+    hardware_i2c
+    hardware_spi
     rtc_ds3231
+    ssd1309
 )
 
 # Add the standard include files to the build
 target_include_directories(alarm_clock PRIVATE
-${CMAKE_CURRENT_LIST_DIR}
+    ${CMAKE_CURRENT_LIST_DIR}
 )
 
 # Modify the below lines to enable/disable output over UART/USB

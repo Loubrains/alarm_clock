@@ -8,6 +8,6 @@ target_include_directories(rtc_ds3231 PUBLIC
 )
 
 target_link_libraries(rtc_ds3231
-    hardware_i2c
     pico_stdlib
+    hardware_i2c
 )
