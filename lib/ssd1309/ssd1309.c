@@ -143,9 +143,6 @@ bool ssd1309_init(ssd1309_t *p, uint16_t width, uint16_t height,
         0x00,
         // resolution and layout
         SET_DISP_START_LINE,
-        // charge pump
-        SET_CHARGE_PUMP,
-        p->external_vcc ? 0x10 : 0x14,
         SET_SEG_REMAP | 0x01,   // column addr 127 mapped to SEG0
         SET_COM_OUT_DIR | 0x08, // scan from COM[N] to COM0
         SET_COM_PIN_CFG,
@@ -154,11 +151,11 @@ bool ssd1309_init(ssd1309_t *p, uint16_t width, uint16_t height,
         SET_CONTRAST,
         0xff,
         SET_PRECHARGE,
-        p->external_vcc ? 0x22 : 0xF1,
-        SET_VCOM_DESEL,
-        0x30,          // or 0x40?
-        SET_ENTIRE_ON, // output follows RAM contents
-        SET_NORM_INV,  // not inverted
+        0x22,           // external VCC
+        SET_VCOM_DESEL, //
+        0x30,           // VCOMH deselect level
+        SET_ENTIRE_ON,  // output follows RAM contents
+        SET_NORM_INV,   // not inverted
         SET_DISP | 0x01,
         // address setting
         SET_MEM_ADDR,

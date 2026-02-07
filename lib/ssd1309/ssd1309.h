@@ -58,7 +58,6 @@ typedef enum
 	SET_DISP_CLK_DIV = 0xD5,
 	SET_PRECHARGE = 0xD9,
 	SET_VCOM_DESEL = 0xDB,
-	SET_CHARGE_PUMP = 0x8D
 } ssd1309_command_t;
 
 /**
@@ -73,7 +72,6 @@ typedef struct
 	uint8_t cs_pin;	   /**< Chip Select (CS) pin */
 	uint8_t dc_pin;	   /**< Data/Command (DC) pin */
 	uint8_t rst_pin;   /**< Reset (RST) pin */
-	bool external_vcc; /**< whether display uses external vcc */
 	uint8_t *buffer;   /**< display buffer */
 	size_t bufsize;	   /**< buffer size */
 } ssd1309_t;
