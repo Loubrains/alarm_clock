@@ -100,8 +100,14 @@ int main()
 
     // --- DFPlayer Initialization ---
     uart_init(_uart0, DFPLAYER_BAUDRATE);
-    gpio_set_function(DFPLAYER_RX_PIN, GPIO_FUNC_UART);
     gpio_set_function(DFPLAYER_TX_PIN, GPIO_FUNC_UART);
+    gpio_set_function(DFPLAYER_RX_PIN, GPIO_FUNC_UART);
+
+    // Flush UART buffer
+    while (uart_is_readable(_uart0))
+    {
+        uart_getc(_uart0);
+    }
 
     if (!player.begin(_uart0))
     {
