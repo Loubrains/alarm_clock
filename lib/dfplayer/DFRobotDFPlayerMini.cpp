@@ -14,6 +14,69 @@
  */
 
 #include "DFRobotDFPlayerMini.h"
+#include <stdio.h>
+
+void DFRobotDFPlayerMini::printDetail(uint8_t type, int value)
+{
+  switch (type)
+  {
+  case TimeOut:
+    printf("Time Out!\n");
+    break;
+  case WrongStack:
+    printf("Stack Wrong!\n");
+    break;
+  case DFPlayerCardInserted:
+    printf("Card Inserted!\n");
+    break;
+  case DFPlayerCardRemoved:
+    printf("Card Removed!\n");
+    break;
+  case DFPlayerCardOnline:
+    printf("Card Online!\n");
+    break;
+  case DFPlayerUSBInserted:
+    printf("USB Inserted!\n");
+    break;
+  case DFPlayerUSBRemoved:
+    printf("USB Removed!\n");
+    break;
+  case DFPlayerPlayFinished:
+    printf("Number: %d Play Finished!\n", value);
+    break;
+  case DFPlayerError:
+    printf("DFPlayerError: ");
+    switch (value)
+    {
+    case Busy:
+      printf("Card not found\n");
+      break;
+    case Sleeping:
+      printf("Sleeping\n");
+      break;
+    case SerialWrongStack:
+      printf("Get Wrong Stack\n");
+      break;
+    case CheckSumNotMatch:
+      printf("Check Sum Not Match\n");
+      break;
+    case FileIndexOut:
+      printf("File Index Out of Bound\n");
+      break;
+    case FileMismatch:
+      printf("Cannot Find File\n");
+      break;
+    case Advertise:
+      printf("In Advertise\n");
+      break;
+    default:
+      break;
+    }
+    break;
+  default:
+    break;
+  }
+}
 
 void DFRobotDFPlayerMini::setTimeOut(uint64_t timeOutDuration)
 {

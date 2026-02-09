@@ -106,6 +106,8 @@ public:
   bool _isAvailable = false;
   bool _isSending = false;
 
+  void printDetail(uint8_t type, int value);
+
   bool handleMessage(uint8_t type, uint16_t parameter = 0);
   bool handleError(uint8_t type, uint16_t parameter = 0);
 
