@@ -315,6 +315,7 @@ public:
     DateTime getAlarm2();
     Ds3231Alarm1Mode getAlarm1Mode();
     Ds3231Alarm2Mode getAlarm2Mode();
+    bool getAlarmEnabled(uint8_t alarm_num);
     void disableAlarm(uint8_t alarm_num);
     void clearAlarm(uint8_t alarm_num);
     bool alarmFired(uint8_t alarm_num);

@@ -368,6 +368,18 @@ Ds3231Alarm2Mode RTC_DS3231::getAlarm2Mode()
 
 /**************************************************************************/
 /*!
+    @brief  Get the alarm enabled status
+        @param 	alarm_num Alarm number to get enabled flag of
+    @return True if alarm is enabled.
+*/
+/**************************************************************************/
+bool RTC_DS3231::getAlarmEnabled(uint8_t alarm_num)
+{
+    return (read_register(DS3231_CONTROL) >> (alarm_num - 1)) & 0x1;
+}
+
+/**************************************************************************/
+/*!
     @brief  Disable alarm
         @param 	alarm_num Alarm number to disable
 */
