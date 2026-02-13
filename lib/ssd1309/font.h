@@ -3,8 +3,7 @@
 
 /*
  * Format
- * <height>, <width>, <additional spacing per char>, 
- * <first ascii char>, <last ascii char>,
+ * <height>, <width>, <additional spacing per char>, <first ascii char>, <last ascii char>,
  * <data>
  */
 const uint8_t font_8x5[] =
