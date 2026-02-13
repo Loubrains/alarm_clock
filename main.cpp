@@ -426,6 +426,12 @@ void handleButtonUp()
     }
     last_handled_time = now;
 
+    if (!display_on)
+    {
+        // Only wake up, don't execute button action
+        resetActivity();
+        return;
+    }
     resetActivity();
 
     switch (current_state)
@@ -493,6 +499,12 @@ void handleButtonDown()
     }
     last_handled_time = now;
 
+    if (!display_on)
+    {
+        // Only wake up, don't execute button action
+        resetActivity();
+        return;
+    }
     resetActivity();
 
     switch (current_state)
@@ -555,6 +567,12 @@ void handleButtonSelect()
     }
     last_handled_time = now;
 
+    if (!display_on)
+    {
+        // Only wake up, don't execute button action
+        resetActivity();
+        return;
+    }
     resetActivity();
 
     switch (current_state)
