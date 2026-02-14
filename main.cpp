@@ -37,6 +37,7 @@ extern "C"
 #define BTN_DOWN_PIN 19
 #define BTN_SELECT_PIN 18
 
+#define VOLUME_BAR_TIMEOUT_S 2
 #define DISPLAY_TIMEOUT_S 20
 #define BUTTON_DEBOUNCE_MS 200
 
@@ -58,8 +59,6 @@ enum State
 };
 enum MenuOption
 {
-    // TODO: VOLUME STATE?
-
     MENU_SET_ALARM,
     MENU_SET_TIME,
     MENU_EXIT,
@@ -97,6 +96,8 @@ uint8_t time_setting_hour = 7;
 uint8_t time_setting_minute = 0;
 uint8_t current_volume = 15;
 uint64_t last_activity_time = 0;
+uint64_t volume_bar_start_time = 0;
+bool volume_bar_visible = false;
 DateTime current_time = DEFAULT_DATETIME;
 
 bool initDisplay()
@@ -290,7 +291,7 @@ void drawClock(DateTime &now)
     {
         char alarm_str[16];
         snprintf(alarm_str, sizeof(alarm_str), "<> %02d:%02d", alarm_hour, alarm_minute);
-        ssd1309_draw_string(&display, 70, 0, 1, alarm_str);
+        ssd1309_draw_string(&display, 80, 0, 1, alarm_str);
     }
 
     display_dirty = true;
@@ -350,11 +351,11 @@ void drawSetAlarm()
     // Draw selection indicator
     if (edit_time_field == TIME_HOUR)
     {
-        ssd1309_draw_square(&display, 20, 50, 28, 2);
+        ssd1309_draw_square(&display, 20, 50, 33, 2);
     }
     else if (edit_time_field == TIME_MINUTE)
     {
-        ssd1309_draw_square(&display, 75, 50, 28, 2);
+        ssd1309_draw_square(&display, 75, 50, 33, 2);
     }
 
     display_dirty = true;
@@ -375,12 +376,32 @@ void drawSetTime()
     // Draw selection indicator
     if (edit_time_field == TIME_HOUR)
     {
-        ssd1309_draw_square(&display, 20, 50, 28, 2);
+        ssd1309_draw_square(&display, 20, 50, 33, 2);
     }
     else if (edit_time_field == TIME_MINUTE)
     {
-        ssd1309_draw_square(&display, 75, 50, 28, 2);
+        ssd1309_draw_square(&display, 75, 50, 33, 2);
     }
+
+    display_dirty = true;
+}
+
+void drawVolumeIndicator()
+{
+    int bar_width = 40;
+    int bar_height = 5;
+    // Clear volume bar
+    ssd1309_clear_square(&display, 0, 0, bar_width, bar_height);
+    // Draw volume bar
+    ssd1309_draw_empty_square(&display, 0, 0, bar_width, bar_height);
+    // Fill volume bar
+    double fill_width = (double(bar_width) / double(30)) * double(current_volume);
+    fill_width = static_cast<int>(fill_width);
+    ssd1309_draw_square(&display, 1, 1, fill_width, bar_height - 1);
+
+    // Set timestamp for auto-hide
+    volume_bar_start_time = time_us_64();
+    volume_bar_visible = true;
 
     display_dirty = true;
 }
@@ -437,8 +458,12 @@ void handleButtonUp()
     switch (current_state)
     {
     case STATE_CLOCK:
-        player.volumeUp();
-        current_volume += 1;
+        if (current_volume < 30)
+        {
+            player.volumeUp();
+            current_volume++;
+        }
+        drawVolumeIndicator();
         break;
 
     case STATE_MENU:
@@ -510,8 +535,12 @@ void handleButtonDown()
     switch (current_state)
     {
     case STATE_CLOCK:
-        player.volumeDown();
-        current_volume -= 1;
+        if (current_volume > 0)
+        {
+            player.volumeDown();
+            current_volume--;
+        }
+        drawVolumeIndicator();
         break;
 
     case STATE_MENU:
@@ -754,6 +783,15 @@ int main()
             }
         }
 
+        // Volume bar timeout
+        if (volume_bar_visible &&
+            time_us_64() - volume_bar_start_time > VOLUME_BAR_TIMEOUT_S * 1000000ULL)
+        {
+            ssd1309_clear_square(&display, 0, 0, 41, 6);
+            volume_bar_visible = false;
+            display_dirty = true;
+        }
+
         // Update display
         if (display_dirty)
         {
@@ -761,7 +799,7 @@ int main()
             display_dirty = false;
         }
 
-        // Timeout
+        // Sleep
         if (current_state != STATE_ALARM_RINGING &&
             display_on &&
             time_us_64() - last_activity_time > (DISPLAY_TIMEOUT_S * 1000000ULL))
